@@ -1,0 +1,80 @@
+version: '3'
+
+
+services:
+    # Nginx
+    nginx119:
+        container_name: ${PROJECT_NAME}_nginx119
+        image: nginx:1.19-alpine
+        depends_on:
+            # 需要在 php73 之後啟動，否則會找不到 "php-main" host
+            - php73
+        volumes:
+            # 基礎設定檔
+            - ./etc/nginx119/nginx.conf:/etc/nginx/nginx.conf
+            # 客製設定檔
+            - ./etc/nginx119/conf.d:/etc/nginx/conf.d
+
+            # 預設 HTTPS 憑證
+            - ./etc/nginx119/localhost.crt:/usr/local/nginx/conf/localhost.crt
+            - ./etc/nginx119/localhost.key:/usr/local/nginx/conf/localhost.key
+
+            # DocumentRoot
+            - ./volumes/htdocs:/var/htdocs
+
+            # Log
+            - ./volumes/logs/nginx119:/var/log/nginx
+        ports:
+            # Web
+            - '9080:80'
+            - '9443:443'
+        networks:
+            - dnmp-demo-net
+
+    # MySQL
+    mysql80:
+        container_name: ${PROJECT_NAME}_mysql80
+        image: mysql:8.0.18
+        user: '${PROJECT_UID}:${PROJECT_GID}'
+        volumes:
+            # 客製設定檔
+            - ./etc/mysql80/conf.d/custom.cnf:/etc/mysql/conf.d/custom.cnf
+            # DB 檔案位置
+            - ./volumes/mysql80:/var/lib/mysql
+            # Log
+            - ./volumes/logs/mysql80:/var/log/mysql
+        networks:
+            - dnmp-demo-net
+        env_file:
+            - ./env/mysql80
+
+    # PHP
+    php73:
+        container_name: ${PROJECT_NAME}_php73
+        build:
+            context: ./services/php73
+        depends_on:
+            - mysql80
+        volumes:
+            # 主設定檔
+            - ./etc/php73/php.ini-development:/usr/local/etc/php/php.ini
+            # 客製設定檔
+            - ./etc/php73/conf.d/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+            # PHP-FPM 設定檔
+            - ./etc/php73-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+
+            # Log
+            - ./volumes/logs/php73:/var/log/php-fpm
+
+            # DocumentRoot
+            - ./volumes/htdocs:/var/htdocs
+        networks:
+            dnmp-demo-net:
+                aliases:
+                    # hostname 別名 (用來指定 nginx 預設的 PHP-FPM 使用版本)
+                    - php-main
+
+
+networks:
+    dnmp-demo-net:
+        driver: bridge
