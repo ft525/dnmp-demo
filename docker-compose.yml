@@ -4,7 +4,7 @@ version: '3'
 services:
     # Nginx
     nginx119:
-        container_name: ${PROJECT_NAME}_nginx119
+        container_name: ${COMPOSE_PROJECT_NAME}_nginx119
         image: nginx:1.19-alpine
         depends_on:
             # 需要在 php73 之後啟動，否則會找不到 "php-main" host
@@ -33,7 +33,7 @@ services:
 
     # MySQL
     mysql80:
-        container_name: ${PROJECT_NAME}_mysql80
+        container_name: ${COMPOSE_PROJECT_NAME}_mysql80
         image: mysql:8.0.18
         user: '${PROJECT_UID}:${PROJECT_GID}'
         volumes:
@@ -50,7 +50,7 @@ services:
 
     # PHP
     php73:
-        container_name: ${PROJECT_NAME}_php73
+        container_name: ${COMPOSE_PROJECT_NAME}_php73
         build:
             context: ./services/php73
         depends_on:
