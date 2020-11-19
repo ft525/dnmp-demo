@@ -15,7 +15,7 @@
 
 ### Nginx 設定
 將 etc/nginx119/conf.d/samples/994-demo.conf 複製到 etc/nginx119/conf.d/vhosts 底下
-並修改 server_name 為你自己的 domain (localhost 是 nginx 預設值，請不要使用，或自行調整預設值 etc/nginx119/conf.d/default.conf)
+並修改 server_name 為 127.0.0.1 或你自己的 domain (localhost 是 nginx 預設值，請不要使用，或自行調整預設值 etc/nginx119/conf.d/default.conf)
 
 
 ### MySQL 設定
@@ -31,8 +31,8 @@
 
 
 ### 畫面檢視
-http://{your-domain}:9080	// Web
-https://{your-domain}:9443	// phpMyAdmin
+http://127.0.0.1:9080	// Web
+https://127.0.0.1:9443	// phpMyAdmin
 
 
 ### 關閉 DNMP

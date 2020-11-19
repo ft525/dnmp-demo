@@ -3,8 +3,8 @@ version: '3'
 
 services:
     # Nginx
-    nginx119:
-        container_name: ${COMPOSE_PROJECT_NAME}_nginx119
+    nginx:
+        container_name: ${COMPOSE_PROJECT_NAME}_nginx
         image: nginx:1.19-alpine
         depends_on:
             # 需要在 php73 之後啟動，否則會找不到 "php-main" host
